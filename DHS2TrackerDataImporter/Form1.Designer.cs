@@ -39,6 +39,7 @@
             this.TxtFilepath = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.cmbProgram = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -88,6 +89,7 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.cmbProgram);
             this.panel4.Controls.Add(this.progressBarImport);
             this.panel4.Location = new System.Drawing.Point(0, 124);
             this.panel4.Name = "panel4";
@@ -97,9 +99,9 @@
             // progressBarImport
             // 
             this.progressBarImport.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.progressBarImport.Location = new System.Drawing.Point(158, 73);
+            this.progressBarImport.Location = new System.Drawing.Point(12, 120);
             this.progressBarImport.Name = "progressBarImport";
-            this.progressBarImport.Size = new System.Drawing.Size(588, 23);
+            this.progressBarImport.Size = new System.Drawing.Size(269, 23);
             this.progressBarImport.TabIndex = 0;
             // 
             // panel3
@@ -124,10 +126,11 @@
             // 
             // TxtFilepath
             // 
-            this.TxtFilepath.Location = new System.Drawing.Point(233, 9);
+            this.TxtFilepath.Location = new System.Drawing.Point(12, 9);
             this.TxtFilepath.Multiline = true;
             this.TxtFilepath.Name = "TxtFilepath";
-            this.TxtFilepath.Size = new System.Drawing.Size(507, 44);
+            this.TxtFilepath.ReadOnly = true;
+            this.TxtFilepath.Size = new System.Drawing.Size(728, 44);
             this.TxtFilepath.TabIndex = 0;
             // 
             // panel2
@@ -142,6 +145,17 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // cmbProgram
+            // 
+            this.cmbProgram.FormattingEnabled = true;
+            this.cmbProgram.Items.AddRange(new object[] {
+            "Community Service",
+            "Medical Internship"});
+            this.cmbProgram.Location = new System.Drawing.Point(504, 16);
+            this.cmbProgram.Name = "cmbProgram";
+            this.cmbProgram.Size = new System.Drawing.Size(215, 24);
+            this.cmbProgram.TabIndex = 1;
+            // 
             // FrmImportTrackerData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -149,6 +163,7 @@
             this.ClientSize = new System.Drawing.Size(1024, 386);
             this.Controls.Add(this.panel1);
             this.Name = "FrmImportTrackerData";
+            this.ShowIcon = false;
             this.Text = "Import DHIS 2 TrackedEntityInstance";
             this.panel1.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
@@ -172,6 +187,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ComboBox cmbProgram;
     }
 }
 
