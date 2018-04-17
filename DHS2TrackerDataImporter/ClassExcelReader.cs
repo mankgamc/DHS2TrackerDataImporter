@@ -7,15 +7,18 @@ using LinqToExcel;
 
 namespace DHS2TrackerDataImporter
 {
-   public class ClassExcelReader
+    public class ClassExcelReader
     {
-       public  List<ClassTrackedEntityInstance> ReadBidResponse(string path, string sheetname)
+       public trackedEntityInstances[] ReadBidResponse(string path, string sheetname)
         {
             string pathToExcelFile = path;
             string sheetName = sheetname;
             var excelFile = new ExcelQueryFactory(pathToExcelFile);
-            var columns = excelFile.GetColumnNames(sheetname);
-            List<ClassTrackedEntityInstance> TrackedEntityInstanceList = new List<ClassTrackedEntityInstance>();
+            var columnNames = excelFile.GetColumnNames(sheetname);
+            trackedEntityInstances[] TrackedEntityInstanceList;
+
+         //   List<trackedEntityInstances> TrackedEntityInstanceListPayLoad = new List<trackedEntityInstances>();
+
 
             excelFile.AddMapping<ClassExcelColumns>(x => x.FirstNames, "fwbL7M02lF8");
             excelFile.AddMapping<ClassExcelColumns>(x => x.Surname, "npuuHtfRuF2");
@@ -74,89 +77,141 @@ namespace DHS2TrackerDataImporter
             excelFile.AddMapping<ClassExcelColumns>(x => x.Alternativeemail, "dx6jTzP3yTg");
 
             var excelRecord = from r in excelFile.Worksheet<ClassExcelColumns>(sheetName) select r;
-
-            var excel = new ExcelQueryFactory(path);
-            var columnNames = excel.GetColumnNames(sheetName);
             int numberOfColumns = columnNames.Count();
-            ClassAttributes[] attributesArray = new ClassAttributes[numberOfColumns];
+          
             try
             {
+                TrackedEntityInstanceList  = new trackedEntityInstances[excelRecord.Count()]; 
                 int i = 0;
+                attributes[] attributesArray = new attributes[numberOfColumns];
+                enrollments[] enrollments = new enrollments[1];
+
+                List<attributes> attributesArrayPayload = new List<attributes>(); 
+
                 foreach (var record in excelRecord)
                 {
-                    ClassTrackedEntityInstance trackentityIns = new ClassTrackedEntityInstance();
+                    attributesArray = new attributes[numberOfColumns];
+
+                    //trackedEntityInstances trackentityIns = new trackedEntityInstances();
                     int j = 0;
                     foreach(var column in columnNames)
                     {
-                        if (column == "fwbL7M02lF8") { attributesArray[j].attribute = "fwbL7M02lF8"; attributesArray[j].value = record.FirstNames; }
-                        else if (column == "npuuHtfRuF2") { attributesArray[j].attribute = "npuuHtfRuF2"; attributesArray[j].value = record.Surname; }
-                        else if (column == "cZNwzP1BH6t") { attributesArray[j].attribute = "cZNwzP1BH6t"; attributesArray[j].value = record.Citizen; }
-                        else if (column == "nUW9eEjkgkm") { attributesArray[j].attribute = "nUW9eEjkgkm"; attributesArray[j].value = record.IDNumber; }
-                        else if (column == "DlM2NO5RIC9") { attributesArray[j].attribute = "DlM2NO5RIC9"; attributesArray[j].value = record.PassportNumber; }
-                        else if (column == "MKujxyoLgZi") { attributesArray[j].attribute = "MKujxyoLgZi"; attributesArray[j].value = record.Gender; }
-                        else if (column == "DEJES3Pv3UG") { attributesArray[j].attribute = "DEJES3Pv3UG"; attributesArray[j].value = record.Race; }
-                        else if (column == "r95GuttdSNh") { attributesArray[j].attribute = "r95GuttdSNh"; attributesArray[j].value = record.MaritalStatus; }
-                        else if (column == "Z5xt753Dfp4") { attributesArray[j].attribute = "Z5xt753Dfp4"; attributesArray[j].value = record.DriversLicense; }
-                        else if (column == "WGnhNYv5ewP") { attributesArray[j].attribute = "WGnhNYv5ewP"; attributesArray[j].value = record.DriversLicenseCode; }
-                        else if (column == "QhnwshFZDmW") { attributesArray[j].attribute = "QhnwshFZDmW"; attributesArray[j].value = record.UniversityName; }
-                        else if (column == "ZwK0SdsGy0P") { attributesArray[j].attribute = "ZwK0SdsGy0P"; attributesArray[j].value = record.StudentNumber; }
-                        else if (column == "lIrn1ZUvl44") { attributesArray[j].attribute = "lIrn1ZUvl44"; attributesArray[j].value = record.CurrentResidentiaAddress; }
-                        else if (column == "XKfrWVdAlCt") { attributesArray[j].attribute = "XKfrWVdAlCt"; attributesArray[j].value = record.CurrentPostalAddress; }
-                        else if (column == "eZLUhiVNdkA") { attributesArray[j].attribute = "eZLUhiVNdkA"; attributesArray[j].value = record.CurrentTelephoneNumber; }
-                        else if (column == "nNo2FHpuXUA") { attributesArray[j].attribute = "nNo2FHpuXUA"; attributesArray[j].value = record.PermanentResidentialAddress; }
-                        else if (column == "vPUAHLnm5Ud") { attributesArray[j].attribute = "vPUAHLnm5Ud"; attributesArray[j].value = record.PermanentPostalAddress; }
-                        else if (column == "FvS7XcU9EBI") { attributesArray[j].attribute = "FvS7XcU9EBI"; attributesArray[j].value = record.PermanentTelephoneNumber; }
-                        else if (column == "rE423VadAmG") { attributesArray[j].attribute = "rE423VadAmG"; attributesArray[j].value = record.CellPhoneNumber; }
-                        else if (column == "B9Lex1IKxxx") { attributesArray[j].attribute = "B9Lex1IKxxx"; attributesArray[j].value = record.Email; }
-                        else if (column == "dHCCRGfLeHh") { attributesArray[j].attribute = "dHCCRGfLeHh"; attributesArray[j].value = record.CurrentResidentialAddressStreet; }
-                        else if (column == "YF1gZoAgfj9") { attributesArray[j].attribute = "YF1gZoAgfj9"; attributesArray[j].value = record.CurrentResidentialAddressSuburb; }
-                        else if (column == "f0vFJfR9Jlc") { attributesArray[j].attribute = "f0vFJfR9Jlc"; attributesArray[j].value = record.CurrentResidentialAddressTown; }
-                        else if (column == "I6KNblOc74J") { attributesArray[j].attribute = "I6KNblOc74J"; attributesArray[j].value = record.CurrentResidentialAddressCode; }
-                        else if (column == "gDlukQllwkB") { attributesArray[j].attribute = "gDlukQllwkB"; attributesArray[j].value = record.CurrentPostalAddressStreet; }
-                        else if (column == "FnegLOJfrhc") { attributesArray[j].attribute = "FnegLOJfrhc"; attributesArray[j].value = record.CurrentPostalAddressSuburb; }
-                        else if (column == "GPRESHAw4VB") { attributesArray[j].attribute = "GPRESHAw4VB"; attributesArray[j].value = record.CurrentPostalAddressTown; }
-                        else if (column == "zlCYDsO3lKt") { attributesArray[j].attribute = "zlCYDsO3lKt"; attributesArray[j].value = record.CurrentPostalAddressCode; }
-                        else if (column == "ml40P4EViJq") { attributesArray[j].attribute = "ml40P4EViJq"; attributesArray[j].value = record.PermanentResidentialAddressStreet; }
-                        else if (column == "tmpCMPvAoxw") { attributesArray[j].attribute = "tmpCMPvAoxw"; attributesArray[j].value = record.PermanentResidentialAddressSuburb; }
-                        else if (column == "rH6Jmk3dEIY") { attributesArray[j].attribute = "rH6Jmk3dEIY"; attributesArray[j].value = record.PermanentResidentialAddressTown; }
-                        else if (column == "x4NhNaB7lI7") { attributesArray[j].attribute = "x4NhNaB7lI7"; attributesArray[j].value = record.PermanentResidentialAddressCode; }
-                        else if (column == "ncKWgjinQU5") { attributesArray[j].attribute = "ncKWgjinQU5"; attributesArray[j].value = record.PermanentPostalAddressStreet; }
-                        else if (column == "a7ZoAENl35h") { attributesArray[j].attribute = "a7ZoAENl35h"; attributesArray[j].value = record.PermanentPostalAddressSuburb; }
-                        else if (column == "KIfvERqVLm0") { attributesArray[j].attribute = "KIfvERqVLm0"; attributesArray[j].value = record.PermanentPostalAddressTown; }
-                        else if (column == "iHi7NpfU3e3") { attributesArray[j].attribute = "iHi7NpfU3e3"; attributesArray[j].value = record.PermanentPostalAddressCode; }
-                        else if (column == "U4Z0Ick64FD") { attributesArray[j].attribute = "U4Z0Ick64FD"; attributesArray[j].value = record.SpouseIDNumber; }
-                        else if (column == "D5uwEanN3gR") { attributesArray[j].attribute = "D5uwEanN3gR"; attributesArray[j].value = record.SpousePassportNumber; }
-                        else if (column == "xrxNHUIbU6q") { attributesArray[j].attribute = "xrxNHUIbU6q"; attributesArray[j].value = record.FieldOfStudyCommunityService; }
-                        else if (column == "dInNUakoHfq") { attributesArray[j].attribute = "dInNUakoHfq"; attributesArray[j].value = record.FieldOfStudyInternship; }
-                        else if (column == "UxDGbY8wlon") { attributesArray[j].attribute = "UxDGbY8wlon"; attributesArray[j].value = record.CountryofOrigin; }
-                        else if (column == "M0aeea196b2") { attributesArray[j].attribute = "M0aeea196b2"; attributesArray[j].value = record.Institution; }
-                        else if (column == "GfazfQE5g3T") { attributesArray[j].attribute = "GfazfQE5g3T"; attributesArray[j].value = record.TermsandConditionsAccepted; }
-                        else if (column == "xkNBkzZVXEe") { attributesArray[j].attribute = "xkNBkzZVXEe"; attributesArray[j].value = record.OtherInstitutionofLearning; }
-                        else if (column == "QLVDdTJHOxQ") { attributesArray[j].attribute = "QLVDdTJHOxQ"; attributesArray[j].value = record.Cycle; }
-                        else if (column == "aNl6WKN7Kk7") { attributesArray[j].attribute = "aNl6WKN7Kk7"; attributesArray[j].value = record.ApplicantUsername; }
-                        else if (column == "q4nNOX8GnfD") { attributesArray[j].attribute = "q4nNOX8GnfD"; attributesArray[j].value = record.Areyourequiredtowriteaboardexam; }
-                        else if (column == "NXZq9iwF18s") { attributesArray[j].attribute = "NXZq9iwF18s"; attributesArray[j].value = record.BoardExamResultDate; }
-                        else if (column == "gf8tGs8ITYC") { attributesArray[j].attribute = "gf8tGs8ITYC"; attributesArray[j].value = record.InstitutionofInternshipTraining; }
-                        else if (column == "wZd9MoxoGnH") { attributesArray[j].attribute = "wZd9MoxoGnH"; attributesArray[j].value = record.RegistrationNumberwiththeStatutoryBody; }
-                        else if (column == "tgmTrEcewUK") { attributesArray[j].attribute = "tgmTrEcewUK"; attributesArray[j].value = record.PERSALnumber; }
-                        else if (column == "OPvGrmEkPeC") { attributesArray[j].attribute = "OPvGrmEkPeC"; attributesArray[j].value = record.Nextofkincontactnumber; }
-                        else if (column == "LYI85LpSbqH") { attributesArray[j].attribute = "LYI85LpSbqH"; attributesArray[j].value = record.Nextofkinnameandsurname; }
-                        else if (column == "oLcmIUVj92L") { attributesArray[j].attribute = "oLcmIUVj92L"; attributesArray[j].value = record.Nextofkinrelationshiptype; }
-                        else if (column == "dx6jTzP3yTg") { attributesArray[j].attribute = "dx6jTzP3yTg"; attributesArray[j].value = record.Alternativeemail; }
+                        attributesArray[j] = new attributes();
+                  
+                            if (column == "fwbL7M02lF8") { if (record.FirstNames == null) { } else { attributesArray[j].attribute = "fwbL7M02lF8"; attributesArray[j].value = record.FirstNames; attributesArrayPayload.Add(attributesArray[j]); } }
+                            else if (column == "npuuHtfRuF2") { if (record.Surname == null) { } else { attributesArray[j].attribute = "npuuHtfRuF2"; attributesArray[j].value = record.Surname; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "cZNwzP1BH6t") { if (record.Citizen == null) { } else { attributesArray[j].attribute = "cZNwzP1BH6t"; attributesArray[j].value = record.Citizen; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "nUW9eEjkgkm") { if (record.IDNumber == null) { } else { attributesArray[j].attribute = "nUW9eEjkgkm"; attributesArray[j].value = record.IDNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "DlM2NO5RIC9") { if (record.PassportNumber == null) { } else { attributesArray[j].attribute = "DlM2NO5RIC9"; attributesArray[j].value = record.PassportNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "MKujxyoLgZi") { if (record.Gender == null) { } else { attributesArray[j].attribute = "MKujxyoLgZi"; attributesArray[j].value = record.Gender; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "DEJES3Pv3UG") { if (record.Race == null) { } else { attributesArray[j].attribute = "DEJES3Pv3UG"; attributesArray[j].value = record.Race; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "r95GuttdSNh") { if (record.MaritalStatus == null) { } else { attributesArray[j].attribute = "r95GuttdSNh"; attributesArray[j].value = record.MaritalStatus; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "Z5xt753Dfp4") { if (record.DriversLicense == null) { } else { attributesArray[j].attribute = "Z5xt753Dfp4"; attributesArray[j].value = record.DriversLicense; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "WGnhNYv5ewP") { if (record.DriversLicenseCode == null) { } else { attributesArray[j].attribute = "WGnhNYv5ewP"; attributesArray[j].value = record.DriversLicenseCode; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "QhnwshFZDmW") { if (record.UniversityName == null) { } else { attributesArray[j].attribute = "QhnwshFZDmW"; attributesArray[j].value = record.UniversityName; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "ZwK0SdsGy0P") { if (record.StudentNumber == null) { } else { attributesArray[j].attribute = "ZwK0SdsGy0P"; attributesArray[j].value = record.StudentNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "lIrn1ZUvl44") { if (record.CurrentPostalAddress == null) { } else { attributesArray[j].attribute = "lIrn1ZUvl44"; attributesArray[j].value = record.CurrentResidentiaAddress; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "XKfrWVdAlCt") { if (record.CurrentPostalAddress == null) { } else { attributesArray[j].attribute = "XKfrWVdAlCt"; attributesArray[j].value = record.CurrentPostalAddress; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "eZLUhiVNdkA") { if (record.CurrentTelephoneNumber == null) { } else { attributesArray[j].attribute = "eZLUhiVNdkA"; attributesArray[j].value = record.CurrentTelephoneNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "nNo2FHpuXUA") { if (record.PermanentResidentialAddress == null) { } else { attributesArray[j].attribute = "nNo2FHpuXUA"; attributesArray[j].value = record.PermanentResidentialAddress; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "vPUAHLnm5Ud") { if (record.PermanentPostalAddress == null) { } else { attributesArray[j].attribute = "vPUAHLnm5Ud"; attributesArray[j].value = record.PermanentPostalAddress; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "FvS7XcU9EBI") { if (record.PermanentTelephoneNumber == null) { } else { attributesArray[j].attribute = "FvS7XcU9EBI"; attributesArray[j].value = record.PermanentTelephoneNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "rE423VadAmG") { if (record.CellPhoneNumber == null) { } else { attributesArray[j].attribute = "rE423VadAmG"; attributesArray[j].value = record.CellPhoneNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "B9Lex1IKxxx") { if (record.Email == null) { } else { attributesArray[j].attribute = "B9Lex1IKxxx"; attributesArray[j].value = record.Email; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "dHCCRGfLeHh") { if (record.CurrentResidentialAddressStreet == null) { } else { attributesArray[j].attribute = "dHCCRGfLeHh"; attributesArray[j].value = record.CurrentResidentialAddressStreet; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "YF1gZoAgfj9") { if (record.CurrentResidentialAddressSuburb == null) { } else { attributesArray[j].attribute = "YF1gZoAgfj9"; attributesArray[j].value = record.CurrentResidentialAddressSuburb; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "f0vFJfR9Jlc") { if (record.CurrentResidentialAddressTown == null) { } else { attributesArray[j].attribute = "f0vFJfR9Jlc"; attributesArray[j].value = record.CurrentResidentialAddressTown; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "I6KNblOc74J") { if (record.CurrentResidentialAddressCode == null) { } else { attributesArray[j].attribute = "I6KNblOc74J"; attributesArray[j].value = record.CurrentResidentialAddressCode; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "gDlukQllwkB") { if (record.CurrentPostalAddressStreet == null) { } else { attributesArray[j].attribute = "gDlukQllwkB"; attributesArray[j].value = record.CurrentPostalAddressStreet; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "FnegLOJfrhc") { if (record.CurrentPostalAddressSuburb == null) { } else { attributesArray[j].attribute = "FnegLOJfrhc"; attributesArray[j].value = record.CurrentPostalAddressSuburb; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "GPRESHAw4VB") { if (record.CurrentPostalAddressTown == null) { } else { attributesArray[j].attribute = "GPRESHAw4VB"; attributesArray[j].value = record.CurrentPostalAddressTown; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "zlCYDsO3lKt") { if (record.CurrentPostalAddressCode == null) { } else { attributesArray[j].attribute = "zlCYDsO3lKt"; attributesArray[j].value = record.CurrentPostalAddressCode; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "ml40P4EViJq") { if (record.PermanentResidentialAddressStreet == null) { } else { attributesArray[j].attribute = "ml40P4EViJq"; attributesArray[j].value = record.PermanentResidentialAddressStreet; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "tmpCMPvAoxw") { if (record.PermanentResidentialAddressSuburb == null) { } else { attributesArray[j].attribute = "tmpCMPvAoxw"; attributesArray[j].value = record.PermanentResidentialAddressSuburb; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "rH6Jmk3dEIY") { if (record.PermanentResidentialAddressTown == null) { } else { attributesArray[j].attribute = "rH6Jmk3dEIY"; attributesArray[j].value = record.PermanentResidentialAddressTown; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "x4NhNaB7lI7") { if (record.PermanentResidentialAddressTown == null) { } else { attributesArray[j].attribute = "x4NhNaB7lI7"; attributesArray[j].value = record.PermanentResidentialAddressCode; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "ncKWgjinQU5") { if (record.PermanentPostalAddressStreet == null) { } else { attributesArray[j].attribute = "ncKWgjinQU5"; attributesArray[j].value = record.PermanentPostalAddressStreet; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "a7ZoAENl35h") { if (record.PermanentPostalAddressSuburb == null) { } else { attributesArray[j].attribute = "a7ZoAENl35h"; attributesArray[j].value = record.PermanentPostalAddressSuburb; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "KIfvERqVLm0") { if (record.PermanentPostalAddressTown == null) { } else { attributesArray[j].attribute = "KIfvERqVLm0"; attributesArray[j].value = record.PermanentPostalAddressTown; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "iHi7NpfU3e3") { if (record.PermanentPostalAddressCode == null) { } else { attributesArray[j].attribute = "iHi7NpfU3e3"; attributesArray[j].value = record.PermanentPostalAddressCode; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "U4Z0Ick64FD") { if (record.SpouseIDNumber == null) { } else { attributesArray[j].attribute = "U4Z0Ick64FD"; attributesArray[j].value = record.SpouseIDNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "D5uwEanN3gR") { if (record.SpousePassportNumber == null) { } else { attributesArray[j].attribute = "D5uwEanN3gR"; attributesArray[j].value = record.SpousePassportNumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "xrxNHUIbU6q") { if (record.FieldOfStudyCommunityService == null) { } else { attributesArray[j].attribute = "xrxNHUIbU6q"; attributesArray[j].value = record.FieldOfStudyCommunityService; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "dInNUakoHfq") { if (record.FieldOfStudyInternship == null) { } else { attributesArray[j].attribute = "dInNUakoHfq"; attributesArray[j].value = record.FieldOfStudyInternship; attributesArrayPayload.Add(attributesArray[j]); } }
+                            else if (column == "UxDGbY8wlon") { if (record.CountryofOrigin == null) { } else { attributesArray[j].attribute = "UxDGbY8wlon"; attributesArray[j].value = record.CountryofOrigin; attributesArrayPayload.Add(attributesArray[j]); } }
+                                else if (column == "M0aeea196b2") { if (record.Institution == null) { } else { attributesArray[j].attribute = "M0aeea196b2"; attributesArray[j].value = record.Institution; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "GfazfQE5g3T") { if (record.TermsandConditionsAccepted == null) { } else { attributesArray[j].attribute = "GfazfQE5g3T"; attributesArray[j].value = record.TermsandConditionsAccepted; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "xkNBkzZVXEe") { if (record.OtherInstitutionofLearning == null) { } else { attributesArray[j].attribute = "xkNBkzZVXEe"; attributesArray[j].value = record.OtherInstitutionofLearning; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "QLVDdTJHOxQ") { if (record.Cycle == null) { } else { attributesArray[j].attribute = "QLVDdTJHOxQ"; attributesArray[j].value = record.Cycle; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "aNl6WKN7Kk7") { if (record.ApplicantUsername == null) { } else { attributesArray[j].attribute = "aNl6WKN7Kk7"; attributesArray[j].value = record.ApplicantUsername; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "q4nNOX8GnfD") { if (record.Areyourequiredtowriteaboardexam == null) { } else { attributesArray[j].attribute = "q4nNOX8GnfD"; attributesArray[j].value = record.Areyourequiredtowriteaboardexam; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "NXZq9iwF18s") { if (record.BoardExamResultDate == null) { } else { attributesArray[j].attribute = "NXZq9iwF18s"; attributesArray[j].value = record.BoardExamResultDate; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "gf8tGs8ITYC") { if (record.InstitutionofInternshipTraining == null) { } else { attributesArray[j].attribute = "gf8tGs8ITYC"; attributesArray[j].value = record.InstitutionofInternshipTraining; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "wZd9MoxoGnH") { if (record.RegistrationNumberwiththeStatutoryBody == null) { } else { attributesArray[j].attribute = "wZd9MoxoGnH"; attributesArray[j].value = record.RegistrationNumberwiththeStatutoryBody; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "tgmTrEcewUK") { if (record.PERSALnumber == null) { } else { attributesArray[j].attribute = "tgmTrEcewUK"; attributesArray[j].value = record.PERSALnumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "OPvGrmEkPeC") { if (record.Nextofkincontactnumber == null) { } else { attributesArray[j].attribute = "OPvGrmEkPeC"; attributesArray[j].value = record.Nextofkincontactnumber; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "LYI85LpSbqH") { if (record.Nextofkinnameandsurname == null) { } else { attributesArray[j].attribute = "LYI85LpSbqH"; attributesArray[j].value = record.Nextofkinnameandsurname; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "oLcmIUVj92L") { if (record.Nextofkinrelationshiptype == null) { } else { attributesArray[j].attribute = "oLcmIUVj92L"; attributesArray[j].value = record.Nextofkinrelationshiptype; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "dx6jTzP3yTg") { if (record.Alternativeemail == null) { } else {attributesArray[j].attribute = "dx6jTzP3yTg"; attributesArray[j].value = record.Alternativeemail; attributesArrayPayload.Add(attributesArray[j]); } }
+
                         j++;
                     }
                     //add attributesArray[j] to TrackentityInstance 
-                    trackentityIns.attribute = attributesArray;
+                    // trackentityIns.attribute = attributesArray;
+                    // trackentityIns.orgUnit = "JLA7wl59oN3";
+                    //  trackentityIns.trackedEntity = "zm66N9hwGtY";
                     //Create TrackentityInstance and its collection
-                    TrackedEntityInstanceList.Add(trackentityIns);
-                    i = i + 1;
+
+                    enrollments enrol = new enrollments();
+
+                    enrol.orgUnit = "JLA7wl59oN3";
+                    //this is the orgunit where all registrations and enrollments must go za national unplaced  
+                    enrol.orgUnit = "oisigJWsjb6";
+
+                    //Read Program Selection from the GUI
+
+                    //if medical Internship
+                    enrol.program = "lADHIO1T8xr";
+                    enrol.enrollmentDate = "2018-04-15";
+                    enrol.incidentDate = "2018-04-15";
+                    enrol.status = "COMPLETED";
+
+                    //if Community Service
+
+                    //enrol.program = "yTKKWWpA6Ku";
+
+                    enrollments[0] = enrol;
+
+                    int completedAttributes = attributesArrayPayload.Count();
+                    attributesArray = new attributes[completedAttributes];
+                    int attrCount = 0;
+
+                    foreach (var attr in attributesArrayPayload)
+                    {
+                        attributesArray[attrCount] = attr;
+                        attrCount = attrCount + 1;
+                    }
+
+                    TrackedEntityInstanceList[i] = new trackedEntityInstances();
+                    TrackedEntityInstanceList[i].orgUnit = "JLA7wl59oN3";
+
+                    //if medical internship - trackedEntity = "zm66N9hwGtY"
+                    TrackedEntityInstanceList[i].trackedEntity = "zm66N9hwGtY";
+
+                    //ifCommunity service  - trackedEntity = "sl8pmIFJdlz"
+
+                    TrackedEntityInstanceList[i].enrollments = enrollments;
+                    TrackedEntityInstanceList[i].attributes = attributesArray;
+                   i = i + 1;
                 }
+                return TrackedEntityInstanceList;
             }
-            catch
+            catch (Exception e )
             {
-                Console.Write("record number");
+                Console.Write(e);
+                return null;
             }
-            return TrackedEntityInstanceList;
+      
         }
     }
 }
