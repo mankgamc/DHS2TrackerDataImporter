@@ -77,6 +77,16 @@
     <Compile Include="ClassExcelColumns.cs" />
     <Compile Include="ClassExcelReader.cs" />
     <Compile Include="ClassRelationships.cs" />
+    <Compile Include="EnrollmentsimportSummaries.cs" />
+    <Compile Include="events.cs" />
+    <Compile Include="eventsArray.cs" />
+    <Compile Include="importCount.cs" />
+    <Compile Include="importOptions.cs" />
+    <Compile Include="importSummaries.cs" />
+    <Compile Include="orgUnit.cs" />
+    <Compile Include="response.cs" />
+    <Compile Include="weapiResponseEnrollment.cs" />
+    <Compile Include="webApiresponse.cs" />
     <Compile Include="trackedEntityInstances.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -111,7 +121,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\enrollmentNamespace.csproj">
+      <Project>{10d44b2f-6ff2-4534-9df4-43d5d6572874}</Project>
+      <Name>enrollmentNamespace</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

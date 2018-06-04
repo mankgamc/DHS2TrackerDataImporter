@@ -4,13 +4,57 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LinqToExcel;
+using System.IO;
+using System.Configuration;
+using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace DHS2TrackerDataImporter
 {
     public class ClassExcelReader
     {
-       public trackedEntityInstances[] ReadBidResponse(string path, string sheetname)
+        private HttpResponseMessage _response;
+        HttpClientHandler clientHandler = new HttpClientHandler();
+        public trackedEntityInstances[] ReadBidResponse(string path, string sheetname, string program, string org, string entity, string pstage)
         {
+            //read app config file 
+            string dhis2Instance = ConfigurationManager.AppSettings["dhis2Instance"];
+
+            //ignore  for hisp icsp instances 
+            
+            string port = ConfigurationManager.AppSettings["port"];
+            string username = ConfigurationManager.AppSettings["username"];
+            string password = ConfigurationManager.AppSettings["password"];
+            string sitename = ConfigurationManager.AppSettings["siteName"];
+
+           // string apiUri = string.Format("{0}:{1}", dhis2Instance, port);
+
+            //ignore  for hisp icsp instances 
+          // string apiUri = string.Format("{0}:{1}", dhis2Instance, port);
+
+            string auth = string.Format("{0}:{1}", username, password);
+            string enc = Convert.ToBase64String(Encoding.ASCII.GetBytes(auth));
+            string cred = string.Format("{0} {1}", "Basic", enc);
+
+            
+            var client = new HttpClient(clientHandler);
+
+           // string apiUri = dhis2Instance;
+
+            //ignore line below for hisp icsp instances 
+              string apiUri = string.Format("{0}:{1}", dhis2Instance, port);
+            client.BaseAddress = new Uri(apiUri);
+
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", cred);
+
+            int progressInt = 0;
+            
             string pathToExcelFile = path;
             string sheetName = sheetname;
             var excelFile = new ExcelQueryFactory(pathToExcelFile);
@@ -18,8 +62,6 @@ namespace DHS2TrackerDataImporter
             trackedEntityInstances[] TrackedEntityInstanceList;
 
          //   List<trackedEntityInstances> TrackedEntityInstanceListPayLoad = new List<trackedEntityInstances>();
-
-
             excelFile.AddMapping<ClassExcelColumns>(x => x.FirstNames, "fwbL7M02lF8");
             excelFile.AddMapping<ClassExcelColumns>(x => x.Surname, "npuuHtfRuF2");
             excelFile.AddMapping<ClassExcelColumns>(x => x.Citizen, "cZNwzP1BH6t");
@@ -75,6 +117,10 @@ namespace DHS2TrackerDataImporter
             excelFile.AddMapping<ClassExcelColumns>(x => x.Nextofkinnameandsurname, "LYI85LpSbqH");
             excelFile.AddMapping<ClassExcelColumns>(x => x.Nextofkinrelationshiptype, "oLcmIUVj92L");
             excelFile.AddMapping<ClassExcelColumns>(x => x.Alternativeemail, "dx6jTzP3yTg");
+            excelFile.AddMapping<ClassExcelColumns>(x => x.preregistration, "pBWgXQPaJUc");
+            
+
+
 
             var excelRecord = from r in excelFile.Worksheet<ClassExcelColumns>(sheetName) select r;
             int numberOfColumns = columnNames.Count();
@@ -86,11 +132,12 @@ namespace DHS2TrackerDataImporter
                 attributes[] attributesArray = new attributes[numberOfColumns];
                 enrollments[] enrollments = new enrollments[1];
 
-                List<attributes> attributesArrayPayload = new List<attributes>(); 
+               // List<attributes> attributesArrayPayload = new List<attributes>(); 
 
                 foreach (var record in excelRecord)
                 {
                     attributesArray = new attributes[numberOfColumns];
+                    List<attributes> attributesArrayPayload = new List<attributes>();
 
                     //trackedEntityInstances trackentityIns = new trackedEntityInstances();
                     int j = 0;
@@ -138,12 +185,13 @@ namespace DHS2TrackerDataImporter
                         else if (column == "D5uwEanN3gR") { if (record.SpousePassportNumber == null) { } else { attributesArray[j].attribute = "D5uwEanN3gR"; attributesArray[j].value = record.SpousePassportNumber; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "xrxNHUIbU6q") { if (record.FieldOfStudyCommunityService == null) { } else { attributesArray[j].attribute = "xrxNHUIbU6q"; attributesArray[j].value = record.FieldOfStudyCommunityService; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "dInNUakoHfq") { if (record.FieldOfStudyInternship == null) { } else { attributesArray[j].attribute = "dInNUakoHfq"; attributesArray[j].value = record.FieldOfStudyInternship; attributesArrayPayload.Add(attributesArray[j]); } }
-                            else if (column == "UxDGbY8wlon") { if (record.CountryofOrigin == null) { } else { attributesArray[j].attribute = "UxDGbY8wlon"; attributesArray[j].value = record.CountryofOrigin; attributesArrayPayload.Add(attributesArray[j]); } }
-                                else if (column == "M0aeea196b2") { if (record.Institution == null) { } else { attributesArray[j].attribute = "M0aeea196b2"; attributesArray[j].value = record.Institution; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "UxDGbY8wlon") { if (record.CountryofOrigin == null) { } else { attributesArray[j].attribute = "UxDGbY8wlon"; attributesArray[j].value = record.CountryofOrigin; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "M0aeea196b2") { if (record.Institution == null) { } else { attributesArray[j].attribute = "M0aeea196b2"; attributesArray[j].value = record.Institution; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "GfazfQE5g3T") { if (record.TermsandConditionsAccepted == null) { } else { attributesArray[j].attribute = "GfazfQE5g3T"; attributesArray[j].value = record.TermsandConditionsAccepted; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "xkNBkzZVXEe") { if (record.OtherInstitutionofLearning == null) { } else { attributesArray[j].attribute = "xkNBkzZVXEe"; attributesArray[j].value = record.OtherInstitutionofLearning; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "QLVDdTJHOxQ") { if (record.Cycle == null) { } else { attributesArray[j].attribute = "QLVDdTJHOxQ"; attributesArray[j].value = record.Cycle; attributesArrayPayload.Add(attributesArray[j]); } }
-                        else if (column == "aNl6WKN7Kk7") { if (record.ApplicantUsername == null) { } else { attributesArray[j].attribute = "aNl6WKN7Kk7"; attributesArray[j].value = record.ApplicantUsername; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "aNl6WKN7Kk7") { if (record.ApplicantUsername == null) { }
+                            else { attributesArray[j].attribute = "aNl6WKN7Kk7"; attributesArray[j].value = record.ApplicantUsername; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "q4nNOX8GnfD") { if (record.Areyourequiredtowriteaboardexam == null) { } else { attributesArray[j].attribute = "q4nNOX8GnfD"; attributesArray[j].value = record.Areyourequiredtowriteaboardexam; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "NXZq9iwF18s") { if (record.BoardExamResultDate == null) { } else { attributesArray[j].attribute = "NXZq9iwF18s"; attributesArray[j].value = record.BoardExamResultDate; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "gf8tGs8ITYC") { if (record.InstitutionofInternshipTraining == null) { } else { attributesArray[j].attribute = "gf8tGs8ITYC"; attributesArray[j].value = record.InstitutionofInternshipTraining; attributesArrayPayload.Add(attributesArray[j]); } }
@@ -153,6 +201,7 @@ namespace DHS2TrackerDataImporter
                         else if (column == "LYI85LpSbqH") { if (record.Nextofkinnameandsurname == null) { } else { attributesArray[j].attribute = "LYI85LpSbqH"; attributesArray[j].value = record.Nextofkinnameandsurname; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "oLcmIUVj92L") { if (record.Nextofkinrelationshiptype == null) { } else { attributesArray[j].attribute = "oLcmIUVj92L"; attributesArray[j].value = record.Nextofkinrelationshiptype; attributesArrayPayload.Add(attributesArray[j]); } }
                         else if (column == "dx6jTzP3yTg") { if (record.Alternativeemail == null) { } else {attributesArray[j].attribute = "dx6jTzP3yTg"; attributesArray[j].value = record.Alternativeemail; attributesArrayPayload.Add(attributesArray[j]); } }
+                        else if (column == "pBWgXQPaJUc") { if (record.preregistration == null) { } else { attributesArray[j].attribute = "pBWgXQPaJUc"; attributesArray[j].value = record.preregistration; attributesArrayPayload.Add(attributesArray[j]); } }
 
                         j++;
                     }
@@ -164,45 +213,108 @@ namespace DHS2TrackerDataImporter
 
                     enrollments enrol = new enrollments();
 
+                   events eventObject = new events();
+                   eventsArray eventArray = new eventsArray();
+                   events[] eventObjectArray = new events[1];
+                    eventObject.orgUnit = "JLA7wl59oN3";
+                    eventObject.program = program;
+                    eventObject.eventDate = (DateTime.Now).AddYears(1).ToString("yyyy-MM-dd");
+
+                    
+                  //  eventObject.programStage = "Ebk4t7oiaxK"; //community service 
+                    eventObject.programStage = "pvydpYwb9NH"; //medical internship
+
+
+                    eventObjectArray[0] = eventObject;
+
                     enrol.orgUnit = "JLA7wl59oN3";
                     //this is the orgunit where all registrations and enrollments must go za national unplaced  
-                    enrol.orgUnit = "oisigJWsjb6";
+              
+                    //    enrol.orgUnit = "oisigJWsjb6";
 
-                    //Read Program Selection from the GUI
+                    //Read Program Selection from the GUI                
 
-                    //if medical Internship
-                    enrol.program = "lADHIO1T8xr";
-                    enrol.enrollmentDate = "2018-04-15";
-                    enrol.incidentDate = "2018-04-15";
+                    enrol.program = program;
+                    //enrol.enrollmentDate = "2018-04-15";
+                    //enrol.incidentDate = "2018-04-15";
+                    enrol.enrollmentDate = (DateTime.Now).AddYears(1).ToString("yyyy-MM-dd");
+                    enrol.incidentDate = (DateTime.Now).AddYears(1).ToString("yyyy-MM-dd");
                     enrol.status = "COMPLETED";
 
-                    //if Community Service
-
-                    //enrol.program = "yTKKWWpA6Ku";
+                //    enrol.events = eventObjectArray;
 
                     enrollments[0] = enrol;
 
+                    Console.WriteLine(pstage);
+                    
                     int completedAttributes = attributesArrayPayload.Count();
-                    attributesArray = new attributes[completedAttributes];
+                  var   attributesArrayJson = new attributes[completedAttributes];
                     int attrCount = 0;
 
                     foreach (var attr in attributesArrayPayload)
                     {
-                        attributesArray[attrCount] = attr;
+                        attributesArrayJson[attrCount] = attr;
                         attrCount = attrCount + 1;
-                    }
+                    }  
 
                     TrackedEntityInstanceList[i] = new trackedEntityInstances();
-                    TrackedEntityInstanceList[i].orgUnit = "JLA7wl59oN3";
-
+                    TrackedEntityInstanceList[i].orgUnit = org;
                     //if medical internship - trackedEntity = "zm66N9hwGtY"
-                    TrackedEntityInstanceList[i].trackedEntity = "zm66N9hwGtY";
-
+                    TrackedEntityInstanceList[i].trackedEntity = entity;
                     //ifCommunity service  - trackedEntity = "sl8pmIFJdlz"
 
                     TrackedEntityInstanceList[i].enrollments = enrollments;
-                    TrackedEntityInstanceList[i].attributes = attributesArray;
-                   i = i + 1;
+
+
+                    TrackedEntityInstanceList[i].attributes = attributesArrayJson;           
+                       
+                        try
+                        {
+                         string payload = JsonConvert.SerializeObject(TrackedEntityInstanceList[i], Formatting.None);
+                             Console.WriteLine("record number  " +i+"  " + payload);
+
+                        //Post trackedEntityInstances
+                        _response = client.PostAsync(string.Format("{0}{1}", sitename, "/api/trackedEntityInstances"),
+                                                new StringContent(JsonConvert.SerializeObject(TrackedEntityInstanceList[i]), Encoding.UTF8,
+                                                    "application/json")).Result;
+
+                        Console.WriteLine(_response);
+                        string  resultslJson =  _response.Content.ReadAsStringAsync().Result;
+                        webApiresponse webapiResponseObject = JsonConvert.DeserializeObject<webApiresponse>(resultslJson);
+                        string trackedentityInstanceId = webapiResponseObject.response.importSummaries[0].reference;
+
+                        eventObject.trackedEntityInstance = trackedentityInstanceId;
+                        eventObject.program = program;
+                        //  eventObject.programStage = "Ebk4t7oiaxK"; //community service 
+                        // eventObject.programStage = "pvydpYwb9NH"; //medical internship
+
+                        eventObject.programStage = pstage;
+                        eventObject.orgUnit = "JLA7wl59oN3"; 
+                        eventObject.eventDate = (DateTime.Now).AddYears(1).ToString("yyyy-MM-dd");
+
+                        
+
+                        //post enrollments 
+                        
+                        enrol.trackedEntityInstance = trackedentityInstanceId;
+
+                        string enrolmentPayload = JsonConvert.SerializeObject(enrol);
+                        _response = client.PostAsync(string.Format("{0}{1}", sitename, "/api/enrollments"),
+                                               new StringContent(JsonConvert.SerializeObject(enrol), Encoding.UTF8,
+                                                   "application/json")).Result;
+                            
+                        //Post events 
+                        string eventObjectPayload = JsonConvert.SerializeObject(eventObject);
+                        _response = client.PostAsync(string.Format("{0}{1}", sitename, "/api/events"),
+                                                new StringContent(JsonConvert.SerializeObject(eventObject), Encoding.UTF8,
+                                                    "application/json")).Result;
+                    }
+                        catch (Exception excp)
+                        {
+                            Console.WriteLine(excp);
+                        }
+                    
+                    i = i + 1;
                 }
                 return TrackedEntityInstanceList;
             }
@@ -210,8 +322,8 @@ namespace DHS2TrackerDataImporter
             {
                 Console.Write(e);
                 return null;
-            }
-      
+            }              
+        }            
+       
         }
-    }
 }

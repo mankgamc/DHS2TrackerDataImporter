@@ -27,7 +27,29 @@ namespace DHS2TrackerDataImporter
         private  readonly log4net.ILog Log = log4net.LogManager.GetLogger
         (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);     
         private  HttpResponseMessage _response;
-       // private  HttpResponseMessage _authenticationResponse;
+        // private  HttpResponseMessage _authenticationResponse;
+
+
+        private string  orgUnit = "JLA7wl59oN3";
+
+
+        //medical internship
+        private string trackedEntity = "zm66N9hwGtY";
+
+
+        private string  programStageComm = "Ebk4t7oiaxK";
+        private string  programStageMedIn = "pvydpYwb9NH";
+
+        private string selectedprogramStage = "";
+
+        //community service
+
+        //  private string trackedEntity = "sl8pmIFJdlz";
+
+        private string programStageMedicalInternship = "";
+        private string programStageCommServe = "";
+
+        private string program;
         public FrmImportTrackerData()
         {
             InitializeComponent();
@@ -47,6 +69,12 @@ namespace DHS2TrackerDataImporter
             string auth = string.Format("{0}:{1}", username, password);
             string enc = Convert.ToBase64String(Encoding.ASCII.GetBytes(auth));
             string cred = string.Format("{0} {1}", "Basic", enc);
+
+
+            string MedicalInternshipprogramUid = "lADHIO1T8xr";
+            string CommunityServiceprogramUid = "yTKKWWpA6Ku";
+
+            string selectedProgram = "";
 
             if (TxtFilepath.Text.Equals(""))
             {
@@ -71,7 +99,21 @@ namespace DHS2TrackerDataImporter
 
                             foreach (var fileInfo in fullNames)
                             {
-                               trackedentityInstPayLoad = xlReader.ReadBidResponse(fileInfo, "Sheet3");
+                                if (program== "Community Service")
+                                    {
+                                    selectedProgram = CommunityServiceprogramUid;
+                                    trackedEntity = "sl8pmIFJdlz";
+                                    selectedprogramStage = programStageComm;
+
+                                    }
+                                else if (program == "Medical Internship")
+                                    {
+                                    selectedProgram = MedicalInternshipprogramUid;
+                                    trackedEntity = "zm66N9hwGtY";
+                                    selectedprogramStage = programStageMedIn;
+                                }
+
+                               trackedentityInstPayLoad = xlReader.ReadBidResponse(fileInfo, "ImportSheet", selectedProgram, orgUnit, trackedEntity, selectedprogramStage);
 
                                trackedEntityInstances.trackedEntityInstances = trackedentityInstPayLoad;
 
@@ -80,7 +122,8 @@ namespace DHS2TrackerDataImporter
                                progressBarImport.Value = progressInt;
                                 var percent = (int)(((double)progressBarImport.Value / (double)progressBarImport.Maximum) * 100);
                                 progressBarImport.CreateGraphics().DrawString(percent + "%", new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black, new PointF(progressBarImport.Width / 2 - 10, progressBarImport.Height / 2 - 7));
-                                
+                              
+                                /*
                                 using (var client = new HttpClient(clientHandler))
                                 {
                                     client.BaseAddress = new Uri(apiUri);
@@ -91,7 +134,7 @@ namespace DHS2TrackerDataImporter
                                     {
                                         string payload = JsonConvert.SerializeObject(trackedEntityInstances, Formatting.None
                                      );
-                                        Console.WriteLine(new StringContent(JsonConvert.SerializeObject(trackedEntityInstances)));
+                                     //   Console.WriteLine(new StringContent(JsonConvert.SerializeObject(trackedEntityInstances)));
 
                                         //post data
                                         _response = client.PostAsync(string.Format("{0}{1}", sitename, "/api/trackedEntityInstances"),
@@ -99,10 +142,15 @@ namespace DHS2TrackerDataImporter
                                                                 "application/json")).Result;
                                         Console.WriteLine(_response);
                                     }
-                                    catch
+                                    catch(Exception excp)
                                     {
+                                        Console.WriteLine(excp);
                                     }
                                 }
+
+    */
+
+
                             }
                         }             
                     }
@@ -111,12 +159,20 @@ namespace DHS2TrackerDataImporter
         }
 
         private void SelectFile_Click(object sender, EventArgs e)
-        {            //
-            this.openFileDialog1.Title = @"Select the Bid Response excel file";
-            this.openFileDialog1.ShowDialog();
-            this.TxtFilepath.Text = this.openFileDialog1.FileName;
-
-            string path = this.TxtFilepath.Text;
+        {
+            this.program = cmbProgram.Text;
+            if (this.program != "")
+            {
+                this.openFileDialog1.Title = @"Select the Bid Response excel file";
+                this.openFileDialog1.ShowDialog();
+                this.TxtFilepath.Text = this.openFileDialog1.FileName;
+                string path = this.TxtFilepath.Text;                
+            } else
+            {
+                MessageBox.Show("Please choose a program", "File", MessageBoxButtons.OK,
+                      MessageBoxIcon.Information);
+            }   
+            
             
         }
     }

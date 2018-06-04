@@ -63,5 +63,9 @@ namespace DHS2TrackerDataImporter
         public string Nextofkinnameandsurname { get; set; }
         public string Nextofkinrelationshiptype { get; set; }
         public string Alternativeemail { get; set; }
+        public string preregistration { get; set; }
+       
     }
 }
+
+

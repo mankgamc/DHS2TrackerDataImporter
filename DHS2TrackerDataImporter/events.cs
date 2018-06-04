@@ -6,22 +6,13 @@ using System.Threading.Tasks;
 
 namespace DHS2TrackerDataImporter
 {
-   public  class enrollments
+   public class events
     {
         public string orgUnit { get; set; }
         public string program { get; set; }
-
-        public string enrollmentDate { get; set; }
-        public string incidentDate { get; set; }
-
-        public string status { get; set; }
-
+        public string programStage { get; set; }
+        public string eventDate { get; set; }
         public string trackedEntityInstance { get; set; }
-
-        //  public events[] events;
-
-
-
-
+        
     }
 }

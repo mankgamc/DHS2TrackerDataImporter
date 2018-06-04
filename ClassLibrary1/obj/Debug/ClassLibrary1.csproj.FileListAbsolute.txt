@@ -1,0 +1,1 @@
+C:\Workspace\HISP\DHS2TrackerDataImporter\DHS2TrackerDataImporter\DHS2TrackerDataImporter\ClassLibrary1\obj\Debug\ClassLibrary1.csprojResolveAssemblyReference.cache
